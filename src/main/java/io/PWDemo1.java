@@ -21,8 +21,7 @@ public class PWDemo1 {
             PrintWriter(String path)
             PrintWriter(File file)
          */
-        PrintWriter pw = new PrintWriter(
-                "pw.txt","UTF-8");
+        PrintWriter pw = new PrintWriter("pw.txt","UTF-8");
         pw.println("让我掉下眼泪的，不止昨夜的酒。");
         pw.println("让我依依不舍地，不止你的温柔。");
         System.out.println("写出完毕!");
