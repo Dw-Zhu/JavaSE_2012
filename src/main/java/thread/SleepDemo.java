@@ -16,16 +16,14 @@ public class SleepDemo {
         美妙递减,到0时提示时间到;
          */
         Scanner scanner=new Scanner(System.in);
-        int number=scanner.nextInt();
-        try {
-            while (number!=1){
-                number--;
+        System.out.println("请输入一个数字:");
+        for(int num=scanner.nextInt();num>0;num--){
+            System.out.println(num);
+            try {
                 Thread.sleep(1000);
-                System.out.println(number);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         System.out.println("程序结束了...");
     }
