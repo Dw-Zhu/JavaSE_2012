@@ -3,7 +3,9 @@ package socket;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * 聊天室服务端
@@ -21,7 +23,8 @@ public class Server {
      */
     private ServerSocket serverSocket;
     //用来保存所有客户端输出流的数组，用于让ClientHandler之间共享输出流广播消息使用
-    private PrintWriter[] allOut = {};
+//    private PrintWriter[] allOut = {};
+    private Collection<PrintWriter> allOut=new ArrayList<>();
 
     public Server(){
         try {
@@ -39,6 +42,7 @@ public class Server {
             e.printStackTrace();
         }
     }
+
     public void start(){
         try {
             /*
@@ -106,20 +110,22 @@ public class Server {
 
 //                synchronized (serverSocket) {//可以
                 synchronized (Server.class) {//可以
-                    //1先对allOut数组扩容
-                    allOut = Arrays.copyOf(allOut, allOut.length + 1);
-                    //2将当前pw存入数组最后一个位置
-                    allOut[allOut.length - 1] = pw;
+//                    //1先对allOut数组扩容
+//                    allOut = Arrays.copyOf(allOut, allOut.length + 1);
+//                    //2将当前pw存入数组最后一个位置
+//                    allOut[allOut.length - 1] = pw;
+                    allOut.add(pw);
                 }
-                System.out.println(host + "上线了!当前在线人数:"+allOut.length);
+//                System.out.println(host + "上线了!当前在线人数:"+allOut.length);
+                System.out.println(host + "上线了!当前在线人数:"+allOut.size());
 
                 String line;
                 while ((line = br.readLine()) != null) {
                     System.out.println(host + "说:" + line);
                     synchronized (Server.class) {
                         //将消息发送给所有客户端
-                        for (int i = 0; i < allOut.length; i++) {
-                            allOut[i].println(host + "说:" + line);
+                        for (PrintWriter o:allOut) {
+                            o.println(host + "说:" + line);
                         }
                     }
                 }
@@ -129,15 +135,18 @@ public class Server {
                 //处理该客户端断开连接后的操作
                 //将对应当前客户端的输出流从共享数组allOut中删除
                 synchronized (Server.class) {
-                    for (int i = 0; i < allOut.length; i++) {
-                        if (pw == allOut[i]) {
-                            allOut[i] = allOut[allOut.length - 1];
-                            allOut = Arrays.copyOf(allOut, allOut.length - 1);
-                            break;
-                        }
-                    }
+//                    for (int i = 0; i < allOut.length; i++) {
+//                        if (pw == allOut[i]) {
+//                            allOut[i] = allOut[allOut.length - 1];
+//                            allOut = Arrays.copyOf(allOut, allOut.length - 1);
+//                            break;
+//                        }
+//                    }
+                    allOut.remove(pw);
                 }
-                System.out.println(host + "下线了!当前在线人数:"+allOut.length);
+//                System.out.println(host + "下线了!当前在线人数:"+allOut.length);
+                System.out.println(host + "下线了!当前在线人数:"+allOut.size());
+
                 try {
                     //最终不再通讯时要关闭socket.(相当于挂电话)
                     //socket关闭后，通过socket获取的输入流与输出流就自动关闭了
